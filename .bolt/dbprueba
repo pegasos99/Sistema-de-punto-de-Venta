@@ -1,0 +1,100 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Coca Cola 500ml",
+      "barcodes": [
+        "1234567890123",
+        "7501055300006"
+      ],
+      "price": 1500,
+      "costPrice": 800,
+      "stockStore": 20,
+      "stockWarehouse": 30,
+      "category": "Bebidas",
+      "description": "Refresco de cola 500ml",
+      "minStock": 10,
+      "hasVariants": false,
+      "variants": [],
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T12:00:00Z"
+    },
+    {
+      "id": "2",
+      "name": "Anillo de Oro",
+      "barcodes": [],
+      "price": 50000,
+      "costPrice": 30000,
+      "stockStore": 0,
+      "stockWarehouse": 0,
+      "category": "Anillo",
+      "description": "Anillo de oro (varios colores)",
+      "minStock": 1,
+      "hasVariants": true,
+      "variants": [
+        {
+          "id": "v1",
+          "color": "Dorado",
+          "stockStore": 1,
+          "stockWarehouse": 2
+        },
+        {
+          "id": "v2",
+          "color": "Plateado",
+          "stockStore": 0,
+          "stockWarehouse": 2
+        }
+      ],
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T12:00:00Z"
+    }
+  ],
+  "sales": [],
+  "expenses": [],
+  "recurringExpenses": [],
+  "categories": [
+    {
+      "id": "bebidas",
+      "name": "Bebidas"
+    },
+    {
+      "id": "snacks",
+      "name": "Snacks"
+    },
+    {
+      "id": "lácteos",
+      "name": "Lácteos"
+    },
+    {
+      "id": "panadería",
+      "name": "Panadería"
+    },
+    {
+      "id": "limpieza",
+      "name": "Limpieza"
+    },
+    {
+      "id": "anillo",
+      "name": "Anillo"
+    },
+    {
+      "id": "pulsera",
+      "name": "Pulsera"
+    },
+    {
+      "id": "otros",
+      "name": "Otros"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin",
+      "fullName": "Administrador",
+      "createdAt": "2024-01-01T12:00:00Z",
+      "isActive": true
+    }
+  ]
+}

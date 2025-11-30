@@ -1,0 +1,18 @@
+REM --- SI YA ESTA INSTALADO, EJECUTAR LA APP ---
+
+echo.
+echo    Iniciando Servidor de Datos y Aplicacion...
+echo ========================================
+echo.
+REM Inicia el servidor de JSON con la versión compatible (0.17.4)
+start "" npx json-server@0.17.4 --watch db.json --port 8080 --static .
+timeout /t 3 > nul
+
+REM Abre el navegador
+start "" "http://localhost:8080"
+
+echo.
+echo Servidor iniciado en: http://localhost:8080
+echo ========================================
+echo.
+pause

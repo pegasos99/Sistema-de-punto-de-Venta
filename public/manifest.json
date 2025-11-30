@@ -1,0 +1,11 @@
+{
+  "name": "StoreManager Pro",
+  "short_name": "StoreManager",
+  "description": "Sistema POS con Gestión de Inventario",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+  ]
+}

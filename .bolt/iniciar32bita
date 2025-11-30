@@ -1,0 +1,19 @@
+@echo off
+REM --- SI YA ESTA INSTALADO, EJECUTAR LA APP ---
+
+echo.
+echo    Iniciando Servidor de Datos y Aplicacion (Modo Local)...
+echo ========================================
+echo.
+REM Usa el json-server instalado en la carpeta node_modules
+start "" "node_modules\.bin\json-server.cmd" --watch db.json --port 8080 --static .
+timeout /t 3 > nul
+
+REM Abre el navegador
+start "" "http://localhost:8080"
+
+echo.
+echo Servidor iniciado en: http://localhost:8080
+echo ========================================
+echo.
+pause

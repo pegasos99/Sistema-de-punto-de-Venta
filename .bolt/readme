@@ -1,0 +1,7 @@
+http://localhost:5173/
+npm run dev para ejecutar el codigo
+Cambios faltantes:
+1. fallos en ganancia no lo esta calculando bien.
+3. quiero q en ganancia se haga una tabla tambien comparando lo q se gano en el mes - el costo que se obtuvo en el mes
+
+
