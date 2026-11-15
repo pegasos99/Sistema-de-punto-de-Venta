@@ -54,6 +54,13 @@ el frontend ni importado datos. La aplicación anterior continúa dependiendo de
   futuras sucursales no están implementadas.
 
 ## Instalación local (aún requiere credenciales de desarrollo)
+
+Sigue **[Configurar credenciales desde Windows](CONFIGURAR-CREDENCIALES.md)**.
+El proyecto Supabase y el esquema inicial **ya existen**; no repitas la migración.
+Tras rellenar `server/.env`, usa `cd server && npm install && npm run check:connection`.
+
+Los pasos que siguen describen la secuencia general de aprovisionamiento:
+
 1. Crear proyecto de Supabase **de pruebas**; configurar credenciales solo en
    `server/.env`, partiendo de `server/.env.example`.
 2. Ejecutar `supabase/migrations/20261115154816_initial_pos.sql` mediante
@@ -112,8 +119,9 @@ solo permitido en productos marcados como variables y para administrador.
 - El test incluido comprueba **validaciones puras**, no transacciones ni
   aislamiento entre negocios. La compilación y los tests CI no se han
   confirmado como ejecutados/aprobados.
-- Se requiere una instancia Supabase de pruebas para ejecutar las migraciones,
-  probar las políticas, autenticación real y concurrencia.
+- La instancia Supabase de desarrollo ya existe, migración inicial aplicada,
+  controles de esquema básicos comprobados. Aún falta conexión PostgreSQL desde
+  servidor local, autenticación real de prueba y concurrencia.
 
 ## Estrategia de migración
 1. Copiar el `db.json` real fuera del repositorio; hash y respaldo de solo lectura.
