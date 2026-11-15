@@ -1,5 +1,23 @@
 # Migración backend + Supabase (incremental)
 
+## Entorno Supabase de desarrollo (creado y migrado)
+- Proyecto: **StoreManager POS - Desarrollo**.
+- Organización: **pegasos99's Org**; región `sa-east-1` (São Paulo).
+- Project ref: `ejmahzmyzmdfjadiqkdp`; URL pública: `https://ejmahzmyzmdfjadiqkdp.supabase.co`.
+- Migración Supabase aplicada: `20261115154816_initial_pos`.
+- Confirmado mediante consultas SQL: **13 tablas / 13 con RLS**, 22
+  restricciones de clave foránea, tablas vacías (sin datos comerciales).
+- Permisos probados: `anon` y `authenticated` NO pueden leer productos;
+  `authenticated` NO puede insertar ventas directamente; membresías tienen
+  lectura restringida por política de usuario.
+- Verificación transaccional (ROLLBACK): FK impide asociar categorías entre
+  negocios, CHECK impide stock negativo, índice único impide saldo duplicado.
+- Supabase Security Advisor indicó 11 avisos informativos de "RLS sin política".
+  Es deliberado: las tablas comerciales NO reciben permisos de cliente directo.
+  Lectura desde API propia a través de PostgreSQL con filtros por negocio.
+- **No** existe todavía una conexión de frontend/backend ejecutada contra este
+  proyecto, ni una cuenta de usuario/membresía preparada. No afirmar integración.
+
 ## Estado
 Esta rama incorpora un **backend independiente en preparación**. No se ha conectado
 el frontend ni importado datos. La aplicación anterior continúa dependiendo de
@@ -38,7 +56,7 @@ el frontend ni importado datos. La aplicación anterior continúa dependiendo de
 ## Instalación local (aún requiere credenciales de desarrollo)
 1. Crear proyecto de Supabase **de pruebas**; configurar credenciales solo en
    `server/.env`, partiendo de `server/.env.example`.
-2. Ejecutar `supabase/migrations/202611150001_initial_pos.sql` mediante
+2. Ejecutar `supabase/migrations/20261115154816_initial_pos.sql` mediante
    migraciones de Supabase o SQL Editor **solo en proyecto vacío/de pruebas**.
 3. Crear usuario por Supabase Auth y, mediante SQL Editor de desarrollo,
    crear `businesses` y `business_memberships` con el UUID real de `auth.users`.
