@@ -107,6 +107,95 @@ app.post('/api/inventory/transfers', async req => {
   return { data: await transferStock(pool, user, req.body) };
 });
 
+
+app.get('/api/categories', async req => {
+  const user = await authenticate(req);
+  const result = await pool.query(
+    'select id, name from public.categories where business_id=$1 order by name',
+    [user.businessId],
+  );
+  return { data: result.rows };
+});
+
+app.post('/api/categories', async (req, reply) => {
+  const user = await authenticate(req);
+  requireAdmin(user);
+  const input = req.body;
+  if (!input || typeof input !== 'object' || Array.isArray(input) ||
+      Object.keys(input).some(k => k !== 'name') ||
+      typeof (input as {name?: unknown}).name !== 'string' ||
+      !(input as {name:string}).name.trim() || (input as {name:string}).name.length > 120) {
+    throw new ApiError(400, 'INVALID_CATEGORY', 'Nombre de categoría inválido');
+  }
+  const result = await pool.query(
+    'insert into public.categories (business_id,name) values ($1,$2) returning id,name',
+    [user.businessId, (input as {name:string}).name.trim()],
+  );
+  return reply.code(201).send({ data: result.rows[0] });
+});
+
+app.patch<{ Params: { id: string } }>('/api/products/:id', async req => {
+  const user = await authenticate(req);
+  requireAdmin(user);
+  if (!isUuid(req.params.id) || !req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+    throw new ApiError(400, 'INVALID_PRODUCT', 'Producto inválido');
+  }
+  const p = req.body as Record<string, unknown>;
+  const allowed = ['name', 'description', 'price', 'minStock', 'categoryId'];
+  if (Object.keys(p).length === 0 || Object.keys(p).some(k => !allowed.includes(k)) ||
+      (p.name !== undefined && (typeof p.name !== 'string' || !p.name.trim() || p.name.length > 200)) ||
+      (p.description !== undefined && (typeof p.description !== 'string' || p.description.length > 5000)) ||
+      (p.price !== undefined && !isCurrency(p.price)) ||
+      (p.minStock !== undefined && (typeof p.minStock !== 'number' ||
+         !Number.isInteger(p.minStock) || p.minStock < 0)) ||
+      (p.categoryId !== undefined && p.categoryId !== null && !isUuid(p.categoryId))) {
+    throw new ApiError(400, 'INVALID_PRODUCT', 'Campos del producto inválidos');
+  }
+  const clauses: string[] = [];
+  const values: unknown[] = [user.businessId, req.params.id];
+  const fields: Array<[string, string]> = [
+    ['name', 'name'], ['description', 'description'], ['price', 'price_amount'],
+    ['minStock', 'min_stock'], ['categoryId', 'category_id'],
+  ];
+  for (const [key, field] of fields) {
+    if (p[key] !== undefined) {
+      values.push(key === 'name' ? (p[key] as string).trim() : p[key]);
+      clauses.push(`${field}=${values.length}`);
+    }
+  }
+  const result = await pool.query(
+    `update public.products set ${clauses.join(',')},updated_at=now()
+     where business_id=$1 and id=$2 and is_active=true returning id,name,price_amount`,
+    values,
+  );
+  if (!result.rows[0]) throw new ApiError(404, 'PRODUCT_NOT_FOUND', 'Producto no disponible');
+  return { data: result.rows[0] };
+});
+
+app.delete<{ Params: { id: string } }>('/api/products/:id', async req => {
+  const user = await authenticate(req);
+  requireAdmin(user);
+  if (!isUuid(req.params.id)) throw new ApiError(400, 'INVALID_PRODUCT', 'Identificador inválido');
+  // Borrado lógico: mantener ventas y movimientos históricos intactos.
+  const r = await pool.query(
+    'update public.products set is_active=false,updated_at=now() where business_id=$1 and id=$2 and is_active=true returning id',
+    [user.businessId, req.params.id],
+  );
+  if (!r.rows[0]) throw new ApiError(404, 'PRODUCT_NOT_FOUND', 'Producto no disponible');
+  return { data: { id: r.rows[0].id, archived: true } };
+});
+
+app.get('/api/inventory/movements', async req => {
+  const user = await authenticate(req);
+  requireAdmin(user);
+  const r = await pool.query(
+    `select id,product_id,location,quantity_delta,reason,created_at,performed_by,reference_id
+     from public.stock_movements where business_id=$1 order by created_at desc limit 200`,
+    [user.businessId],
+  );
+  return { data: r.rows };
+});
+
 app.addHook('onClose', async () => { await pool.end(); });
 app.listen({ host: config.host, port: config.port }).catch(error => {
   app.log.error(error);
