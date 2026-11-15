@@ -123,6 +123,14 @@ solo permitido en productos marcados como variables y para administrador.
   controles de esquema básicos comprobados. Aún falta conexión PostgreSQL desde
   servidor local, autenticación real de prueba y concurrencia.
 
+## Auditoría segura de datos históricos (sin importar)
+Cuando tengas tu `db.json` **real** localmente, no lo subas a Git.
+Desde `server/` puedes ejecutar `npm run audit:legacy -- ../db.json`.
+Esto crea una copia de seguridad de solo acceso local y un informe de
+conteos/posibles inconsistencias en `server/local-backups/`, excluido de Git.
+No imprime usuarios, contraseñas, nombres de productos ni importes individuales.
+La auditoría no escribe en Supabase; la importación real aún es pendiente.
+
 ## Estrategia de migración
 1. Copiar el `db.json` real fuera del repositorio; hash y respaldo de solo lectura.
 2. Validar campos, registros duplicados, variantes, costos, cantidades y fechas.

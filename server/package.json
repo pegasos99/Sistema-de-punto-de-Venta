@@ -11,7 +11,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "check:connection": "node scripts/check-connection.mjs"
+    "check:connection": "node scripts/check-connection.mjs",
+    "audit:legacy": "node scripts/audit-legacy.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",

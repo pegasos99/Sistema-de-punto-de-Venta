@@ -27,3 +27,5 @@ jobs:
         run: npm run build
       - name: Validate domain rules
         run: npm test
+      - name: Audit a bundled legacy JSON fixture (never commercial data)
+        run: npm run audit:legacy -- ../.bolt/dbprueba

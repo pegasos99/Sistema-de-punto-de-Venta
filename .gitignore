@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# POS: credenciales y datos comerciales históricos
+server/.env
+server/local-backups/
+db.json
