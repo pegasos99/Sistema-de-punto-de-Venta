@@ -49,6 +49,54 @@ el frontend ni importado datos. La aplicación anterior continúa dependiendo de
 6. Para consultar API autenticada enviar `Authorization: Bearer <access_token>`
    y `x-business-id: <uuid_del_negocio>`. Nunca enviar claves secretas al chat.
 
+## Endpoints implementados en este incremento (no integrados al frontend)
+- `GET /health`: comprobación del proceso (no de la DB).
+- `GET /api/products`: catálogo y stock, siempre filtrado por negocio.
+- `POST /api/products`, `PATCH /api/products/:id`, `DELETE /api/products/:id`:
+  creación, edición limitada y archivado lógico (administrador).
+- `GET /api/categories`, `POST /api/categories`: categorías del negocio.
+- `POST /api/sales`: venta de **productos simples enteros** con una única
+  transacción, clave idempotente UUID, cálculo de importes servidor, bloqueo
+  de inventario y registros de movimientos y pagos.
+- `GET /api/sales`: últimas 100 ventas del negocio, con ítems asociados.
+- `POST /api/inventory/adjustments`: entradas y ajustes simples (administrador).
+- `POST /api/inventory/transfers`: transferencia de bodega a tienda
+  (administrador), con registro de dos movimientos.
+- `GET /api/inventory/movements`: últimos 200 movimientos (administrador).
+
+El cliente debe enviar `Authorization: Bearer <token_supabase_auth>` y
+`x-business-id: <uuid>`. `POST /api/sales` espera:
+```json
+{
+  "idempotencyKey": "a1d0abf0-2222-4222-8222-a1d0abf02222",
+  "items": [
+    {
+      "productId": "a1d0abf0-1111-4111-8111-a1d0abf01111",
+      "quantity": 2,
+      "paymentMethod": "efectivo"
+    }
+  ]
+}
+```
+Son **IDs ilustrativos, no una venta ejecutada**. El backend rechaza totales
+mandados desde el cliente y variantes/ventas por peso por ahora, para no
+modificar silenciosamente la semántica del inventario. Precio manual
+solo permitido en productos marcados como variables y para administrador.
+
+## Limitaciones y tareas pendientes
+- El frontend **todavía usa JSON-server**. No se han cambiado componentes ni
+  se puede afirmar que haya integración con Supabase.
+- No están implementados alta de usuarios, caja formal, importador, gastos,
+  recurrencias ni soporte completo de variantes/peso.
+- Los movimientos de inventario crean un registro auditado, pero el costo
+  contable de una entrada/ajuste todavía requiere definición y pruebas con el
+  JSON comercial; no usar esos movimientos para contabilidad real aún.
+- El test incluido comprueba **validaciones puras**, no transacciones ni
+  aislamiento entre negocios. La compilación y los tests CI no se han
+  confirmado como ejecutados/aprobados.
+- Se requiere una instancia Supabase de pruebas para ejecutar las migraciones,
+  probar las políticas, autenticación real y concurrencia.
+
 ## Estrategia de migración
 1. Copiar el `db.json` real fuera del repositorio; hash y respaldo de solo lectura.
 2. Validar campos, registros duplicados, variantes, costos, cantidades y fechas.
