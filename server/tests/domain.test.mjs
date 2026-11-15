@@ -27,6 +27,12 @@ test('rechaza cantidad negativa y sin idempotencia', () => {
     { code: 'INVALID_IDEMPOTENCY_KEY' });
 });
 
+test('acepta un precio decimal válido', () => {
+  const sale = parseSale({ idempotencyKey, items: [{ productId, quantity: 1,
+    paymentMethod: 'efectivo', customPrice: 0.29 }] });
+  assert.equal(sale.items[0].customPrice, 0.29);
+});
+
 test('rechaza precio manual negativo', () => {
   assert.throws(() => parseSale({ idempotencyKey, items: [{ productId, quantity: 1,
     paymentMethod: 'efectivo', customPrice: -5 }] }), { code: 'INVALID_PRICE' });

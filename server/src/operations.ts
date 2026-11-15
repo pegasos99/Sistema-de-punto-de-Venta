@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
-import { ApiError, money, parseSale, parseStockChange, type SaleItemInput } from './domain.js';
+import { ApiError, isUuid, money, parseSale, parseStockChange, type SaleItemInput } from './domain.js';
 import type { Principal } from './auth.js';
 
 const transaction = async <T>(pool: Pool, work: (client: PoolClient) => Promise<T>): Promise<T> => {
@@ -200,8 +200,7 @@ export async function transferStock(pool: Pool, principal: Principal, body: unkn
   }
   const input = body as Record<string, unknown>;
   if (Object.keys(input).some(k => !['productId', 'quantity'].includes(k)) ||
-    typeof input.productId !== 'string' ||
-    !/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(input.productId) ||
+    !isUuid(input.productId) ||
     !Number.isInteger(input.quantity) || Number(input.quantity) <= 0 || Number(input.quantity) > 100000) {
     throw new ApiError(400, 'INVALID_TRANSFER', 'Transferencia inválida');
   }

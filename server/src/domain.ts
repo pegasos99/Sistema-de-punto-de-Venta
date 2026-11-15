@@ -9,9 +9,13 @@ export type SaleItemInput = {
 };
 
 export class ApiError extends Error {
-  constructor(public readonly statusCode: number, public readonly code: string, message: string) {
+  readonly statusCode: number;
+  readonly code: string;
+  constructor(statusCode: number, code: string, message: string) {
     super(message);
     this.name = 'ApiError';
+    this.statusCode = statusCode;
+    this.code = code;
   }
 }
 
@@ -20,7 +24,7 @@ export const isUuid = (v: unknown): v is string =>
 
 export const isCurrency = (v: unknown): v is number =>
   typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 1_000_000_000
-    && Math.round(v * 100) === v * 100;
+    && Math.abs(v * 100 - Math.round(v * 100)) < 1e-7;
 
 export const money = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
 
